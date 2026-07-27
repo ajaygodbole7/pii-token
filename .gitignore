@@ -1,0 +1,8 @@
+target/
+slice/target/
+.gradle/
+build/
+.DS_Store
+.idea/
+.claude/
+.worktrees/

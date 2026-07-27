@@ -1,0 +1,24 @@
+package io.github.ajaygodbole7.piitoken.protocol;
+
+/**
+ * Content-free p1/n1 protocol failure classifications.
+ */
+public enum ProtocolReason {
+    INVALID_NAMESPACE,
+    INVALID_FIELD_ID,
+    INVALID_KEY_VERSION,
+    INVALID_VALUE,
+    INVALID_TOKEN,
+    TOKEN_TOO_LONG,
+    WRONG_TOKEN_FAMILY,
+    UNKNOWN_KEY_VERSION,
+    DUPLICATE_KEY_VERSION,
+    DUPLICATE_TOKEN,
+    INVALID_LIVE_KEY_SET,
+    PROVIDER_POLICY_MISMATCH,
+    INVALID_PROVIDER_OUTPUT,
+    WRONG_OPERATION,
+    PERSISTENCE_STATE_INVALID,
+    INVALID_STORED_SUFFIX,
+    INDEPENDENT_SUFFIX_MUTATION
+}

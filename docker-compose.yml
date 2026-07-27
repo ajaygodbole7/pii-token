@@ -1,0 +1,93 @@
+services:
+  postgres:
+    image: postgres:18.4
+    environment:
+      POSTGRES_DB: pii_demo
+      POSTGRES_USER: pii_demo
+      POSTGRES_PASSWORD: evaluation-only-password
+    ports:
+      - "15432:5432"
+    volumes:
+      - ./compatibility/maven-consumer/src/test/resources/consumer-registry.sql:/docker-entrypoint-initdb.d/10-consumer-registry.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pii_demo -d pii_demo"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  vault:
+    image: hashicorp/vault:2.0.3
+    command:
+      - server
+      - -dev
+      - -dev-root-token-id=evaluation-root-token
+      - -dev-listen-address=0.0.0.0:8200
+    environment:
+      VAULT_ADDR: http://127.0.0.1:8200
+    ports:
+      - "18200:8200"
+    healthcheck:
+      test: ["CMD", "vault", "status"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  vault-init:
+    image: hashicorp/vault:2.0.3
+    depends_on:
+      vault:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        if ! vault secrets list -format=json | grep -q '"transit/"'; then
+          vault secrets enable -path=transit transit
+        fi
+
+        if ! vault read transit/keys/pii-token >/dev/null 2>&1; then
+          vault write transit/keys/pii-token \
+            type=hmac \
+            key_size=32 \
+            exportable=false \
+            allow_plaintext_backup=false
+        fi
+
+        latest_version="$$(vault read -field=latest_version transit/keys/pii-token)"
+        case "$$latest_version" in
+          1)
+            vault write -f transit/keys/pii-token/rotate
+            ;;
+          2)
+            ;;
+          *)
+            echo "unexpected evaluation key version" >&2
+            exit 1
+            ;;
+        esac
+
+        desired_policy="$$(cat /config/runtime-policy.hcl)"
+        current_policy="$$(vault policy read pii-token-evaluation 2>/dev/null || true)"
+        if [ "$$current_policy" != "$$desired_policy" ]; then
+          vault policy write pii-token-evaluation /config/runtime-policy.hcl
+        fi
+
+        if ! vault token lookup evaluation-runtime-token >/dev/null 2>&1; then
+          vault token create \
+            -id=evaluation-runtime-token \
+            -policy=pii-token-evaluation \
+            -no-default-policy \
+            -renewable=false \
+            -ttl=1h
+        fi
+
+        touch /tmp/ready
+        exec tail -f /dev/null
+    environment:
+      VAULT_ADDR: http://vault:8200
+      VAULT_TOKEN: evaluation-root-token
+    volumes:
+      - ./compose/vault-runtime-policy.hcl:/config/runtime-policy.hcl:ro
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /tmp/ready"]
+      interval: 2s
+      timeout: 3s
+      retries: 30

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.0</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>io.github.ajaygodbole7</groupId>
+    <artifactId>pii-token-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>PII Tokenization Library</name>
+    <description>Irreversible annotation-driven SSN and PAN tokenization for Spring Data JPA</description>
+    <url>https://github.com/ajaygodbole7/pii-token</url>
+
+    <licenses>
+        <license>
+            <name>Apache-2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>ajaygodbole7</id>
+            <name>Ajay Godbole</name>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/ajaygodbole7/pii-token</url>
+        <connection>scm:git:https://github.com/ajaygodbole7/pii-token.git</connection>
+        <developerConnection>scm:git:git@github.com:ajaygodbole7/pii-token.git</developerConnection>
+    </scm>
+
+    <modules>
+        <module>pii-token-annotations</module>
+        <module>pii-token-processor</module>
+        <module>pii-token-spring-boot-starter</module>
+        <module>pii-token-provider-vault</module>
+        <module>pii-token-provider-kms</module>
+        <module>pii-token-test</module>
+    </modules>
+
+    <properties>
+        <java.version>25</java.version>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <useModulePath>false</useModulePath>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

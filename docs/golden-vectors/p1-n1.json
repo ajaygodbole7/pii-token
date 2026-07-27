@@ -1,0 +1,58 @@
+{
+  "fixtureFormat": "pii-golden-vectors/v1",
+  "protocolProfile": "p1/n1",
+  "providerProfile": "HMAC_SHA256_PREHASH_V1",
+  "keyMaterial": "TEST-ONLY literal keys; prohibited in production",
+  "vectors": [
+    {
+      "id": "searchable-ssn-1",
+      "family": "searchable",
+      "inputs": {
+        "applicationNamespace": "bank.cards",
+        "piiId": "customer.ssn",
+        "kind": "SSN",
+        "searchable": true,
+        "normalizerVersion": 1,
+        "logicalKeyVersion": "k2026_01",
+        "hmacKeyHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+        "presentedValue": "123-45-6789",
+        "saltHex": null
+      },
+      "expected": {
+        "normalizedValue": "123456789",
+        "normalizedValueHex": "313233343536373839",
+        "domainHex": "7069692d746f6b7c317c01000a62616e6b2e6361726473000c637573746f6d65722e73736e000353534e0001",
+        "lpDomainHex": "002c7069692d746f6b7c317c01000a62616e6b2e6361726473000c637573746f6d65722e73736e000353534e0001",
+        "messageHex": "002c7069692d746f6b7c317c01000a62616e6b2e6361726473000c637573746f6d65722e73736e000353534e0001313233343536373839",
+        "sha256DigestHex": "dac3b73b79e8543f66fff6cfe7710db3757ccc0c6350643919716d095bba1f83",
+        "hmacSha256Hex": "18c182504e1b5c3b7107cb683152e9a8bdf1d4a38b7c7a4ca04b646251e82d77",
+        "token": "b2.k2026_01.n1.18c182504e1b5c3b7107cb683152e9a8bdf1d4a38b7c7a4ca04b646251e82d77"
+      }
+    },
+    {
+      "id": "match-only-pan-1",
+      "family": "match-only",
+      "inputs": {
+        "applicationNamespace": "bank.cards",
+        "piiId": "customer.pan",
+        "kind": "PAN",
+        "searchable": false,
+        "normalizerVersion": 1,
+        "logicalKeyVersion": "k2026_01",
+        "hmacKeyHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+        "presentedValue": "4111 1111 1111 1111",
+        "saltHex": "000102030405060708090a0b0c0d0e0f"
+      },
+      "expected": {
+        "normalizedValue": "4111111111111111",
+        "normalizedValueHex": "34313131313131313131313131313131",
+        "domainHex": "7069692d746f6b7c317c00000a62616e6b2e6361726473000c637573746f6d65722e70616e000350414e0001",
+        "lpDomainHex": "002c7069692d746f6b7c317c00000a62616e6b2e6361726473000c637573746f6d65722e70616e000350414e0001",
+        "messageHex": "002c7069692d746f6b7c317c00000a62616e6b2e6361726473000c637573746f6d65722e70616e000350414e0001000102030405060708090a0b0c0d0e0f34313131313131313131313131313131",
+        "sha256DigestHex": "53ebfbc24f9aff444e18b789a7ed16b7ea88289ada247ded28348dab011fb908",
+        "hmacSha256Hex": "400a0791a851c1efcebb50db8ebbc092f27c050401cf94ff927be7e7c4134e22",
+        "token": "v2.k2026_01.n1.000102030405060708090a0b0c0d0e0f.400a0791a851c1efcebb50db8ebbc092f27c050401cf94ff927be7e7c4134e22"
+      }
+    }
+  ]
+}
