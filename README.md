@@ -7,7 +7,7 @@ not use this library.
 What it supports:
 
 - exact match and equality search
-- verification ("does this candidate match this record?")
+- verification: check a value someone gives you against a stored record
 - deduplication
 - optional last-four display
 
