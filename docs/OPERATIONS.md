@@ -101,23 +101,28 @@ auto-configuration backs off when the application supplies its own
 `pii.vault.allow-insecure-http=true` exists only for disposable local/dev
 tests. Production configuration must use HTTPS.
 
-Each entry under `versions` is a permanent logical-to-numeric mapping. Vault
-supports an explicit `key_version` on Transit HMAC requests, and the adapter
-sends it on every call. Never renumber or repoint an existing logical version.
-Do not raise Vault's `min_encryption_version` above a `READ_ONLY` version while
-any stored row still uses that version.
+Version-mapping rules:
+
+- Each entry under `versions` is a permanent logical-to-numeric mapping.
+- The adapter sends an explicit `key_version` on every Transit HMAC request.
+- Never renumber or repoint an existing logical version.
+- Do not raise Vault's `min_encryption_version` above a `READ_ONLY` version
+  while any stored row still uses that version.
 
 ## AWS KMS HMAC
 
-The optional `pii-token-provider-kms` module uses AWS KMS `GenerateMac`. Create
-one `HMAC_256` key with `GENERATE_VERIFY_MAC` usage per logical version and
-grant the runtime identity `kms:GenerateMac` only on the exact live key ARNs.
-Do not grant key administration or alias mutation.
+The optional `pii-token-provider-kms` module uses AWS KMS `GenerateMac`.
 
-Map every logical version directly to a full key ARN. KMS aliases are mutable
-and are rejected by the adapter. Adding a key creates a new logical version;
-never repoint an existing logical version. Configuration and LocalStack
-fidelity limits are documented in
+- Create one `HMAC_256` key with `GENERATE_VERIFY_MAC` usage per logical
+  version.
+- Grant the runtime identity `kms:GenerateMac` only on the exact live key
+  ARNs. Do not grant key administration or alias mutation.
+- Map every logical version directly to a full key ARN. KMS aliases are
+  mutable and are rejected by the adapter.
+- Adding a key creates a new logical version; never repoint an existing
+  logical version.
+
+Configuration and LocalStack fidelity limits are documented in
 [`pii-token-provider-kms/README.md`](../pii-token-provider-kms/README.md).
 
 ## Registry roles

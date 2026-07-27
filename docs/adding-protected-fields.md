@@ -46,23 +46,25 @@ These exist before the first `@PII` field and are not repeated per field:
    `META-INF/pii/migrations/fields/<descriptor-id>.sql`; do not rerun blocks
    for existing fields.
 5. Review and apply the generated guarded policy update using the migration
-   identity. The startup diagnostic and offline diagnostic command show the
-   added/removed/altered descriptors, name the required field blocks, and emit
-   the exact compare-and-set update. Approval is per deployment change set —
-   several fields added together need one registry update, not one each.
-   **The application will refuse to start until this is done.** This is
-   deliberate: adding a protected field is a governed change, and the
-   fail-closed startup gate is what makes the registry mean something.
-6. If the column is already populated with plaintext, adding `@PII` does not
-   migrate it — and ordinary "load and re-save" is **not possible**: the load
-   hook rejects a non-token value before the entity can be loaded. Migrating a
-   populated column requires an explicit strategy executed **before** the
-   original column becomes protected. The supported approach is a side-by-side
-   migration: add a new protected column while the old plaintext column remains
-   unannotated, copy each value through managed entity writes, verify the new
-   tokens, then delete and drop the plaintext column. The library has no public
-   manual tokenization API for an in-place SQL batch. Plan this before changing
-   the existing field annotation.
+   identity.
+   - The startup diagnostic and offline diagnostic command show the
+     added/removed/altered descriptors, name the required field blocks, and
+     emit the exact compare-and-set update.
+   - Approval is per deployment change set: several fields added together need
+     one registry update, not one each.
+   - The application refuses to start until the registry update is applied, by
+     design.
+6. Adding `@PII` does not migrate an already-populated plaintext column, and
+   load-and-resave cannot work: the load hook rejects a non-token value before
+   the entity can be loaded. Migrate before the column becomes protected,
+   using a side-by-side migration:
+   1. Add a new protected column; leave the old plaintext column unannotated.
+   2. Copy each value through managed entity writes.
+   3. Verify the new tokens.
+   4. Delete the plaintext data and drop the old column.
+
+   The library has no public manual tokenization API for an in-place SQL
+   batch.
 
 ### What the developer never does
 
@@ -77,8 +79,8 @@ into the domain, so new-kind tokens can never collide with old ones). It is
 still a protocol event and follows change control.
 
 Prerequisite: the field passes both criteria in
-[`field-suitability.md`](field-suitability.md) and has a **closed, public
-grammar**, ideally with a checksum
+[`field-suitability.md`](field-suitability.md) and has a closed, public
+grammar, ideally with a checksum
 (IBAN mod-97, SIN Luhn, ABA checksum). A kind without a strong grammar
 (free-form account numbers, per-issuer licence formats) needs a design
 decision first; do not add it by loosening validation.

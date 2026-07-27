@@ -39,12 +39,17 @@ The auto-configuration is active only when `pii.kms.enabled=true` and no other
 `TokenMacProvider` bean exists. Exactly one provider module may be active in a
 deployment. Do not activate the Vault and KMS providers together.
 
-The owned AWS SDK v2 client uses the configured region, the SDK default
-credential chain, one total API timeout, and exactly one SDK attempt (zero SDK
-retries). The adapter itself owns the fair concurrency semaphore and at most
-one bounded retry by default. An application-supplied `KmsClient` is accepted
-only when its observable retry strategy also has exactly one attempt; the
-adapter does not close that client. The adapter closes a client it created.
+Client and retry ownership:
+
+- The owned AWS SDK v2 client uses the configured region, the SDK default
+  credential chain, one total API timeout, and exactly one SDK attempt (zero
+  SDK retries).
+- The adapter itself owns the fair concurrency semaphore and at most one
+  bounded retry by default.
+- An application-supplied `KmsClient` is accepted only when its observable
+  retry strategy also has exactly one attempt.
+- The adapter closes a client it created and never closes an
+  application-supplied client.
 
 Provider failures expose only shared content-free reason codes. KMS
 `NotFoundException`, disabled keys, pending-deletion/invalid key state, and
@@ -58,14 +63,18 @@ Failsafe runs the module integration tests against the exact
 `localstack/localstack:4.14.0` image. The emulator is test-only and must never
 be deployed as a production KMS substitute.
 
-The integration suite proves real request/response framing, deterministic
-HMACs, distinct keys, key-per-version rollover, full 32-byte MACs, response
-key-ARN matching, disabled-key failure, and byte-exact reproduction of the
-published `docs/golden-vectors/p1-n1.json` MAC using imported test key
-material.
+The integration suite proves:
 
-LocalStack does not enforce AWS IAM. `AUTH_FAILED` mapping is covered by unit
-tests against real AWS SDK exception types, not by a fabricated LocalStack
-authentication test. The emulator also does not prove AWS HSM custody, quotas,
-latency, availability, policy evaluation, or incident behavior. Production
-acceptance still requires a narrowly scoped AWS identity and real AWS KMS.
+- real request/response framing
+- deterministic HMACs and distinct keys
+- key-per-version rollover
+- full 32-byte MACs and response key-ARN matching
+- disabled-key failure
+- byte-exact reproduction of the published `docs/golden-vectors/p1-n1.json`
+  MAC using imported test key material
+
+LocalStack does not enforce AWS IAM, so `AUTH_FAILED` mapping is covered by
+unit tests against real AWS SDK exception types. The emulator also does not
+prove AWS HSM custody, quotas, latency, availability, policy evaluation, or
+incident behavior. Production acceptance still requires a narrowly scoped AWS
+identity and real AWS KMS.

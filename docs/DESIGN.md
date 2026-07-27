@@ -225,14 +225,18 @@ One deployment has exactly one `CURRENT` key version and zero through three
 5. retire an old version only after every writer is drained and an offline
    inventory proves no stored token references it.
 
-This does not rewrite existing rows and provides no unlimited key-version
-history. An old version remains live until every row that names it is deleted
-or replaced from newly presented plaintext. Each deployment with searchable
-fields must declare
-its maximum token lifetime and rollover cadence and demonstrate, with safety
-margin, that the oldest version reaches zero rows before a fifth live version
-would be required. If that proof is unavailable, bounded rollover is not an
-operable key-lifecycle strategy for that deployment.
+Constraints of bounded rollover:
+
+- It does not rewrite existing rows and provides no unlimited key-version
+  history.
+- An old version remains live until every row that names it is deleted or
+  replaced from newly presented plaintext.
+- Each deployment with searchable fields must declare its maximum token
+  lifetime and rollover cadence.
+- The deployment must demonstrate, with safety margin, that the oldest version
+  reaches zero rows before a fifth live version would be required.
+- If that proof is unavailable, bounded rollover is not an operable
+  key-lifecycle strategy for that deployment.
 
 A normalizer change, provider change, or token-key compromise requires a new
 namespace plus deletion or recollection/re-tokenization from an authorized

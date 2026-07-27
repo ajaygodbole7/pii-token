@@ -191,11 +191,13 @@ reason only and never repair SQL.
 
 Provider errors expose only the typed reasons `INVALID_INPUT`, `AUTH_FAILED`,
 `THROTTLED`, `UNAVAILABLE`, `DEADLINE`, `INTERRUPTED`, `UNKNOWN_VERSION`, and
-`INVALID_RESPONSE`. `INTERRUPTED` is distinct from deadline expiry and the
-adapter re-asserts the caller thread's interrupt flag. `AUTH_FAILED`
-deliberately combines invalid, expired, or revoked credentials with
-insufficient policy when the provider does not distinguish them on the wire.
-Adapters never parse provider error bodies to guess a finer classification.
+`INVALID_RESPONSE`.
+
+- `INTERRUPTED` is distinct from deadline expiry; the adapter re-asserts the
+  caller thread's interrupt flag.
+- `AUTH_FAILED` combines invalid, expired, or revoked credentials with
+  insufficient policy when the provider does not distinguish them on the wire.
+- Adapters never parse provider error bodies to guess a finer classification.
 
 ## Incident assumptions
 

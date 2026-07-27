@@ -1,10 +1,11 @@
 # Field Suitability
 
-This library applies **irreversible keyed tokenization**: a protected value can be
+This library applies irreversible keyed tokenization: a protected value can be
 matched, deduplicated, verified, and optionally displayed as a last-four suffix,
-but never recovered. Suitability is therefore not "is the field sensitive?" —
-many sensitive fields (names, postal addresses) must be read back and cannot use
-this library. A field is suitable only when it passes both criteria below.
+but never recovered. Suitability depends on reversibility rather than
+sensitivity: many sensitive fields (names, postal addresses) must be read back
+and cannot use this library. A field is suitable only when it passes both
+criteria below.
 
 ## Suitability criteria
 
