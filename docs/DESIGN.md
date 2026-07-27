@@ -1,6 +1,9 @@
 # Architecture and Scope
 
-This document describes the implemented `p1/n1` architecture on `main`.
+This document describes the implemented architecture on `main`. `p1/n1` is
+the current version pair: protocol version 1 (the token byte construction)
+and normalizer version 1 (the SSN/PAN validation and canonicalization rules),
+both specified in [PROTOCOL.md](PROTOCOL.md).
 
 ## Security goals and non-goals
 

@@ -1,8 +1,9 @@
 # p1/n1 golden vectors
 
 `p1-n1.json` is the byte-exact regression fixture for the current
-[`p1/n1` protocol](../PROTOCOL.md). Literal HMAC keys and salts are test-only
-inputs; using them in any deployed system is prohibited.
+[`p1/n1` protocol](../PROTOCOL.md) (protocol version 1, normalizer version 1).
+Literal HMAC keys and salts are test-only inputs; using them in any deployed
+system is prohibited.
 
 `GoldenVectorTest` in `pii-token-spring-boot-starter` loads this file and
 requires the production `P1N1TokenEngine` to reproduce normalization, domain

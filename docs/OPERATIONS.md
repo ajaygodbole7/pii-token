@@ -1,6 +1,7 @@
 # Operations Runbook
 
-This runbook applies to the supported `p1/n1` deployment described in
+This runbook applies to the supported `p1/n1` deployment (protocol version 1,
+normalizer version 1; see [`PROTOCOL.md`](PROTOCOL.md)) described in
 [`DESIGN.md`](DESIGN.md). Commands and SQL use placeholders; bind values or
 review quoted identifiers instead of concatenating untrusted text.
 

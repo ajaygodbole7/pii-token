@@ -172,7 +172,10 @@ artifact itself must always be declared with Maven test scope.
 - [Operations](docs/OPERATIONS.md) covers deployment, registry updates, key
   rollover, retirement, and incidents.
 - [Protocol p1/n1](docs/PROTOCOL.md) freezes token bytes, normalization, and
-  registry semantics.
+  registry semantics. `p1/n1` names the current version pair: protocol
+  version 1 (the byte construction) and normalizer version 1 (the SSN/PAN
+  validation and canonicalization rules). Every stored token records this
+  pair.
 
 ## Current limitations
 

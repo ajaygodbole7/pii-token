@@ -1,5 +1,11 @@
 # PII Token Protocol p1/n1 — Current Versioned Specification
 
+`p1/n1` is the version pair this document specifies: `p1` is protocol
+version 1, the byte-level token construction; `n1` is normalizer version 1,
+the SSN/PAN validation and canonicalization rules. The two are versioned
+independently because either can change without the other, and every stored
+token records the pair that produced it.
+
 **Status:** current `p1/n1` byte and registry specification for this
 implementation. Existing stored tokens must never be silently reinterpreted.
 A byte-incompatible change requires a new version plus an explicit
