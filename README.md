@@ -16,7 +16,7 @@ API exists.
 
 ## What using it looks like
 
-An application declares the protection decision on its entity:
+Add `@PII` to the entity field you want protected:
 
 ```java
 @PII(
@@ -46,6 +46,85 @@ What this means for application code:
 - provider credentials are wired once; field behavior stays annotation-driven
 - adding a field still requires deployment-reviewed schema and registry
   changes; see [Adding protected fields](docs/adding-protected-fields.md)
+
+## Using it in your application
+
+One-time setup, in order:
+
+1. **Build the artifacts** into your local Maven repository (no public Maven
+   repository is configured yet):
+
+   ```shell
+   ./mvnw -DskipTests install
+   ```
+
+2. **Add the dependencies**: the starter, exactly one provider module, and the
+   annotation processor on the compiler path.
+
+   ```xml
+   <dependency>
+       <groupId>io.github.ajaygodbole7</groupId>
+       <artifactId>pii-token-spring-boot-starter</artifactId>
+       <version>0.1.0-SNAPSHOT</version>
+   </dependency>
+   <dependency>
+       <groupId>io.github.ajaygodbole7</groupId>
+       <artifactId>pii-token-provider-vault</artifactId>
+       <version>0.1.0-SNAPSHOT</version>
+   </dependency>
+   ```
+
+   ```xml
+   <plugin>
+       <groupId>org.apache.maven.plugins</groupId>
+       <artifactId>maven-compiler-plugin</artifactId>
+       <configuration>
+           <annotationProcessorPaths>
+               <path>
+                   <groupId>io.github.ajaygodbole7</groupId>
+                   <artifactId>pii-token-processor</artifactId>
+                   <version>0.1.0-SNAPSHOT</version>
+               </path>
+           </annotationProcessorPaths>
+       </configuration>
+   </plugin>
+   ```
+
+   For AWS KMS instead of Vault, replace the provider dependency with
+   `pii-token-provider-kms`; see its
+   [README](pii-token-provider-kms/README.md). Activate exactly one provider.
+
+3. **Configure the application**:
+
+   ```properties
+   pii.application-namespace=your.app
+   # Required only if any field uses searchable = true:
+   pii.searchable-digests=permitted
+
+   pii.vault.address=https://vault.example.com
+   pii.vault.mount=transit
+   pii.vault.key-name=pii-token
+   pii.vault.key-set-id=your-key-set
+   pii.vault.current-version=k1
+   pii.vault.versions.k1=1
+   ```
+
+4. **Provide the Vault credential**: define a `VaultTokenSupplier` bean that
+   returns the runtime token. The token needs the HMAC path only; see
+   [Operations](docs/OPERATIONS.md) for the least-privilege policy.
+
+5. **Provision the registry**: a privileged migration identity creates the
+   `pii_security` schema and the approved policy and key rows; the application
+   role gets `SELECT` only. The application refuses to start until its
+   compiled descriptors match the approved registry. See
+   [Adding protected fields](docs/adding-protected-fields.md) and
+   [Operations](docs/OPERATIONS.md).
+
+After setup, each protected field is the annotation plus a reviewed schema and
+registry change, as described in
+[Adding protected fields](docs/adding-protected-fields.md). The
+[runnable sample](compatibility/maven-consumer) shows a complete working
+configuration.
 
 ## Local evaluation
 
