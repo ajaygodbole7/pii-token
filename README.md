@@ -7,7 +7,7 @@ not use this library.
 What it supports:
 
 - exact match and equality search
-- verification: check a value someone gives you against a stored record
+- verification: check a value someone gives you against a tokenized sensitive field
 - deduplication
 - optional last-four display
 
